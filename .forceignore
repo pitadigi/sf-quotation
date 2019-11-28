@@ -10,3 +10,23 @@ package.xml
 
 # LWC Jest
 **/__tests__/**
+
+null-Community Member Layout
+
+**/applications/**
+**/appMenus/**
+**/brandingSets/**
+**/communityThemeDefinitions/**
+**/contentassets/**
+**/networkBranding/**
+**/networks/**
+**/profiles/**
+**/quickActions/**
+**/roles/**
+**/siteDotComSites/**
+**/sites/**
+**/flexipages/**
+**/profilePasswordPolicies/**
+**/profileSessionSettings/**
+**/tabs/**
+**/layouts/**

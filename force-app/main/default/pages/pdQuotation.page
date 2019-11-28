@@ -1,0 +1,300 @@
+<apex:page docType="html-5.0" controller="pdQuotation" action="{!doPrint}" sidebar="false" showHeader="false" title="見積書">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+
+    <style>
+        /* 印刷時の用紙設定 */
+        @page {
+            size: A4; /* 用紙サイズ */
+            margin: 0; /* ヘッダー・フッダーを無効化 */
+        }
+        /* 要素の初期化 */
+        * {
+            /* マージン・パディングをリセットした方がデザインしやすい */
+            margin: 0;
+            padding: 0;
+            /* デフォルトのフォント */
+            color: black;
+            font-family: "游ゴシック Medium", "Yu Gothic Medium", "游ゴシック体", YuGothic, sans-serif;
+            font-size: 11pt;
+            font-weight: normal;
+            /* 背景色・背景画像を印刷する（Chromeのみで有効） */
+            -webkit-print-color-adjust: exact;
+        }
+        /* リスト初期化 */
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        /* ページレイアウト (section.page を１ページとする) */
+        .page {
+            overflow: hidden;
+            position: relative;
+            box-sizing: border-box;
+            page-break-after: always;
+
+            /* 用紙サイズ A4 */
+            height: 297;
+            width: 210mm;
+
+            /* 余白サイズ */
+            padding-top: 20mm;
+            padding-left: 20mm;
+            padding-right: 20mm;
+            padding-bottom: : 20mm;
+
+            /* 改ページ指定 */
+            page-break-after: always;
+        }
+        /* プレビュー用のスタイル */
+        @media screen {
+            body {
+                background: #e0e0e0;
+            }
+            .page {
+                background: white; /* 背景を白く */
+                box-shadow: 0 0.5mm 2mm rgba(0, 0, 0, 0.3); /* ドロップシャドウ */
+                margin: 5mm auto;
+            }
+        }
+        /* ページ番号 */
+        body {
+            counter-reset: page;
+        }
+        .page::after {
+            position: absolute;
+            bottom: 15mm;
+            width: 170mm;
+            text-align: center;
+            counter-increment: page;
+            content: "";
+            /* content: "- " counter(page) " -"; */
+        }
+        /* レポートタイトル */
+        div.report-title {
+            height: 14mm;
+            font-weight: bold;
+            font-size: 2em;
+            text-align: left;
+        }
+        /* レポートヘッダー - お客様名 */
+        div.report-header-customer-name {
+            width: 90mm;
+            height: 8mm;
+            font-size: 1.3em;
+            text-align: left;
+        }
+        /* レポートヘッダー - お客様住所 */
+        div.report-header-customer-address {
+            width: 90mm;
+            height: 22mm;
+            text-align: left;
+        }
+        /* レポートヘッダー - 説明 */
+        div.report-header-description {
+            width: 90mm;
+            height: 10mm;
+            text-align: left;
+        }
+        /* レポートヘッダー - 金額 */
+        div.report-header-total-title {
+            width: 90mm;
+            height: 6mm;
+            font-size: 1.5em;
+            text-align: left;
+        }
+        div.report-header-total {
+            width: 90mm;
+            height: 6mm;
+            font-size: 1.5em;
+            text-align: left;
+        }
+        /* レポートヘッダー - 見積日 */
+        div.report-header-quotation-date {
+            width: 65mm;
+            height: 7mm;
+            text-align: left;
+        }
+        /* レポートヘッダー - 見積番号 */
+        div.report-header-quotation-no {
+            width: 65mm;
+            height: 7mm;
+            text-align: left;
+        }
+        /* レポートヘッダー - 会社名 */
+        div.report-header-company-name {
+            width: 65mm;
+            height: 5mm;
+            font-size: 1.2em;
+            text-align: left;
+        }
+        /* レポートヘッダー - 会社住所 */
+        div.report-header-company-address {
+            width: 65mm;
+            height: 27mm;
+            text-align: left;
+        }
+        /* レポート内容 */
+        div.report-content {
+            height: 160mm;
+        }
+
+        /* 内容表示テーブル */
+        table.content-list, table.content-list th, table.content-list td {
+            border: none;
+            border-collapse: collapse;
+            padding: 8px;
+        }
+        table.content-list th {
+            color: white;
+            background-color: black;
+        }
+        table.content-list tbody tr:nth-child(even) {
+            background-color: whitesmoke;
+        }
+        table.content-list tr:last-child {
+            border-bottom: 2px solid black;
+        }
+        /* 内容表示テーブル 詳細 */
+        table.content-list th.item-detail, table.content-list td.item-detail {
+            text-align: left;
+            width: 100mm;
+        }
+        /* 内容テーブル 数量 */
+        table.content-list th.quantity, table.content-list td.quantity {
+            text-align: right;
+            width: 20mm;
+        }
+        /* 内容テーブル 単価 */
+        table.content-list th.price, table.content-list td.price {
+            text-align: right;
+            width: 20mm;
+        }
+        /* 内容テーブル 合計 */
+        table.content-list th.total, table.content-list td.total {
+            text-align: right;
+            width: 30mm;
+        }
+        /* 小計 */
+        div.subtotal {
+            width: 65mm;
+            height: 7mm;
+            text-align: right;
+        }
+    </style>
+
+    <section class="page">
+        <div class="report-title">
+            見積書
+        </div>
+        <div class="report-header-customer-name">
+            お客様名
+        </div>
+        <div class="report-header-customer-address">
+            お客様住所<br />
+            お客様住所<br />
+            担当者名
+        </div>
+        <div class="report-header-description">
+            下記の通り御見積もり申し上げます。
+        </div>
+        <div class="report-header-total-title">
+            合計金額
+        </div>
+        <div class="report-header-total">
+            220,000円
+        </div>
+        <div class="report-content">
+            <table class="content-list">
+                <thead>
+                    <tr>
+                        <th class="item-detail">詳細</th>
+                        <th class="quantity">数量</th>
+                        <th class="price">単価</th>
+                        <th class="total">合計</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="item-detail">デジタルサービス導入支援</td>
+                        <td class="quantity">1式</td>
+                        <td class="price">200,000</td>
+                        <td class="total">200,000</td>
+                    </tr>
+                    <tr>
+                        <td class="item-detail">デジタルサービス導入支援</td>
+                        <td class="quantity">1式</td>
+                        <td class="price">200,000</td>
+                        <td class="total">200,000</td>
+                    </tr>
+                    <tr>
+                        <td class="item-detail">デジタルサービス導入支援</td>
+                        <td class="quantity">1式</td>
+                        <td class="price">200,000</td>
+                        <td class="total">200,000</td>
+                    </tr>
+                    <tr>
+                        <td class="item-detail">デジタルサービス導入支援</td>
+                        <td class="quantity">1式</td>
+                        <td class="price">200,000</td>
+                        <td class="total">200,000</td>
+                    </tr>
+                    <tr>
+                        <td class="item-detail">デジタルサービス導入支援</td>
+                        <td class="quantity">1式</td>
+                        <td class="price">200,000</td>
+                        <td class="total">200,000</td>
+                    </tr>
+                    <tr>
+                        <td class="item-detail">デジタルサービス導入支援</td>
+                        <td class="quantity">1式</td>
+                        <td class="price">200,000</td>
+                        <td class="total">200,000</td>
+                    </tr>
+                    <tr>
+                        <td class="item-detail">デジタルサービス導入支援</td>
+                        <td class="quantity">1式</td>
+                        <td class="price">200,000</td>
+                        <td class="total">200,000</td>
+                    </tr>
+                    <tr>
+                        <td class="item-detail">デジタルサービス導入支援</td>
+                        <td class="quantity">1式</td>
+                        <td class="price">200,000</td>
+                        <td class="total">200,000</td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td></td>
+                        <td colspan="2">小計</td>
+                        <td>200,000円</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td colspan="2">消費税</td>
+                        <td>20,000円</td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td colspan="2">合計金額</td>
+                        <td>220,000円</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </section>
+
+    <apex:includeScript value="{!$Resource.jquery}" />
+    <script type="text/javascript">
+        $(document).ready(() => {
+            setTimeout(() => {
+                /*
+                window.print();
+                window.close();
+                */
+            }, 200);
+        });
+    </script>
+</apex:page>
