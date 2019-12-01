@@ -71,6 +71,16 @@
             content: "";
             /* content: "- " counter(page) " -"; */
         }
+        /* レポートヘッダー */
+        div.report-header-container {
+            display: flex;
+        }
+        div.report-header-customer {
+            flex: 0 0 100mm;
+        }
+        div.report-header-company {
+            flex: 0 0 70mm;
+        }
         /* レポートタイトル */
         div.report-title {
             height: 14mm;
@@ -94,32 +104,68 @@
         /* レポートヘッダー - 説明 */
         div.report-header-description {
             width: 90mm;
-            height: 10mm;
+            height: 8mm;
             text-align: left;
         }
         /* レポートヘッダー - 金額 */
-        div.report-header-total-title {
+        div.report-header-total-container {
+            display: flex;
             width: 90mm;
-            height: 6mm;
+            height: 10mm;
+            border-bottom: 2px solid black;
+        }
+        div.report-header-total-title {
+            flex: 0 0 40mm;
             font-size: 1.5em;
-            text-align: left;
+            font-weight: bold;
+            text-align: center;
         }
         div.report-header-total {
-            width: 90mm;
-            height: 6mm;
+            flex: 0 0 50mm;
             font-size: 1.5em;
-            text-align: left;
+            font-weight: bold;
+            text-align: center;
         }
         /* レポートヘッダー - 見積日 */
-        div.report-header-quotation-date {
-            width: 65mm;
+        div.report-header-quotation-date-container {
+            display: flex;
+            width: 70mm;
             height: 7mm;
+        }
+        div.report-header-quotation-date-title {
+            flex: 0 0 30mm;
+            text-align: left;
+        }
+        div.report-header-quotation-date {
+            flex: 0 0 40mm;
             text-align: left;
         }
         /* レポートヘッダー - 見積番号 */
-        div.report-header-quotation-no {
-            width: 65mm;
+        div.report-header-quotation-no-container {
+            width: 70mm;
             height: 7mm;
+            display: flex;
+        }
+        div.report-header-quotation-no-title {
+            flex: 0 0 30mm;
+            text-align: left;
+        }
+        div.report-header-quotation-no {
+            flex: 0 0 40mm;
+            text-align: left;
+        }
+        /* レポートヘッダー - 有効期限 */
+        div.report-header-expiration-date-container {
+            width: 70mm;
+            height: 7mm;
+            display: flex;
+        }
+        div.report-header-expiration-date-title {
+            flex: 0 0 30mm;
+            text-align: left;
+        }
+        div.report-header-expiration-date {
+            flex: 0 0 40mm;
             text-align: left;
         }
         /* レポートヘッダー - 会社名 */
@@ -137,6 +183,7 @@
         }
         /* レポート内容 */
         div.report-content {
+            margin-top: 2mm;
             height: 160mm;
         }
 
@@ -177,9 +224,10 @@
             width: 30mm;
         }
         /* 小計 */
-        div.subtotal {
-            width: 65mm;
-            height: 7mm;
+        table.content-list td.footer-total-title {
+            text-align: left;
+        }
+        table.content-list td.footer-total {
             text-align: right;
         }
     </style>
@@ -188,22 +236,38 @@
         <div class="report-title">
             見積書
         </div>
-        <div class="report-header-customer-name">
-            お客様名
-        </div>
-        <div class="report-header-customer-address">
-            お客様住所<br />
-            お客様住所<br />
-            担当者名
-        </div>
-        <div class="report-header-description">
-            下記の通り御見積もり申し上げます。
-        </div>
-        <div class="report-header-total-title">
-            合計金額
-        </div>
-        <div class="report-header-total">
-            220,000円
+        <div class="report-header-container">
+            <div class="report-header-customer">
+                <div class="report-header-customer-name">
+                    お客様名
+                </div>
+                <div class="report-header-customer-address">
+                    お客様住所<br />
+                    お客様住所<br />
+                    担当者名
+                </div>
+                <div class="report-header-description">
+                    下記の通り御見積もり申し上げます。
+                </div>
+                <div class="report-header-total-container">
+                    <div class="report-header-total-title">
+                        合計金額
+                    </div>
+                    <div class="report-header-total">
+                        220,000円
+                    </div>
+                </div>
+            </div>
+            <div class="report-header-company">
+                <div class="report-header-quotation-no-container">
+                    <div class="report-header-quotation-no-title">
+                        見積番号
+                    </div>
+                    <div class="report-header-quotation-no">
+                        E20191202-001
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="report-content">
             <table class="content-list">
@@ -268,18 +332,18 @@
                 <tfoot>
                     <tr>
                         <td></td>
-                        <td colspan="2">小計</td>
-                        <td>200,000円</td>
+                        <td colspan="2" class="footer-total-title">小計</td>
+                        <td class="footer-total">200,000円</td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td colspan="2">消費税</td>
-                        <td>20,000円</td>
+                        <td colspan="2" class="footer-total-title">消費税</td>
+                        <td class="footer-total">20,000円</td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td colspan="2">合計金額</td>
-                        <td>220,000円</td>
+                        <td colspan="2" class="footer-total-title">合計金額</td>
+                        <td class="footer-total">220,000円</td>
                     </tr>
                 </tfoot>
             </table>
