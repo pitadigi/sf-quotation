@@ -1,0 +1,8 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId">
+    <aura:handler name="init" value="{!this}" action="{!c.doPrint}" />
+    <div class="slds-page-header" role="banner">
+        <p class="slds-text-heading_label">見積</p>
+        <h1 class="slds-page-header__title slds-m-right_small14
+            slds-truncate slds-align-left">見積書印刷</h1>
+    </div>
+</aura:component>	

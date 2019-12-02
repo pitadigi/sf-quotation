@@ -17,7 +17,7 @@
             /* デフォルトのフォント */
             color: black;
             font-family: "游ゴシック Medium", "Yu Gothic Medium", "游ゴシック体", YuGothic, sans-serif;
-            font-size: 11pt;
+            font-size: 10pt;
             font-weight: normal;
             /* 背景色・背景画像を印刷する（Chromeのみで有効） */
             -webkit-print-color-adjust: exact;
@@ -58,7 +58,8 @@
                 margin: 5mm auto;
             }
         }
-        /* ページ番号 */
+        /* ページ番号 ※見積は1ページなので未使用 */
+        /*
         body {
             counter-reset: page;
         }
@@ -68,9 +69,9 @@
             width: 170mm;
             text-align: center;
             counter-increment: page;
-            content: "";
-            /* content: "- " counter(page) " -"; */
+            content: "- " counter(page) " -";
         }
+        */
         /* レポートヘッダー */
         div.report-header-container {
             display: flex;
@@ -85,14 +86,15 @@
         div.report-title {
             height: 14mm;
             font-weight: bold;
-            font-size: 2em;
+            font-size: 2rem;
             text-align: left;
         }
         /* レポートヘッダー - お客様名 */
         div.report-header-customer-name {
             width: 90mm;
             height: 8mm;
-            font-size: 1.3em;
+            font-size: 1.3rem;
+            font-weight: bold;
             text-align: left;
         }
         /* レポートヘッダー - お客様住所 */
@@ -116,13 +118,13 @@
         }
         div.report-header-total-title {
             flex: 0 0 40mm;
-            font-size: 1.5em;
+            font-size: 1.5rem;
             font-weight: bold;
             text-align: center;
         }
         div.report-header-total {
             flex: 0 0 50mm;
-            font-size: 1.5em;
+            font-size: 1.5rem;
             font-weight: bold;
             text-align: center;
         }
@@ -138,7 +140,7 @@
         }
         div.report-header-quotation-date {
             flex: 0 0 40mm;
-            text-align: left;
+            text-align: right;
         }
         /* レポートヘッダー - 見積番号 */
         div.report-header-quotation-no-container {
@@ -152,7 +154,7 @@
         }
         div.report-header-quotation-no {
             flex: 0 0 40mm;
-            text-align: left;
+            text-align: right;
         }
         /* レポートヘッダー - 有効期限 */
         div.report-header-expiration-date-container {
@@ -166,13 +168,14 @@
         }
         div.report-header-expiration-date {
             flex: 0 0 40mm;
-            text-align: left;
+            text-align: right;
         }
         /* レポートヘッダー - 会社名 */
         div.report-header-company-name {
+            position: relative;
             width: 65mm;
-            height: 5mm;
-            font-size: 1.2em;
+            height: 12mm;
+            font-size: 1.2rem;
             text-align: left;
         }
         /* レポートヘッダー - 会社住所 */
@@ -181,10 +184,22 @@
             height: 27mm;
             text-align: left;
         }
+        /* レポートヘッダー - 印影 */
+        .report-header-company-logo {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+        .report-header-company-stamp {
+            position: absolute;
+            left: 76px;
+            top: 25px;
+        }
         /* レポート内容 */
         div.report-content {
             margin-top: 2mm;
-            height: 160mm;
+            margin-bottom: 2mm;
+            height: 117mm;
         }
 
         /* 内容表示テーブル */
@@ -206,7 +221,8 @@
         /* 内容表示テーブル 詳細 */
         table.content-list th.item-detail, table.content-list td.item-detail {
             text-align: left;
-            width: 100mm;
+            width: 80mm;
+            height: 6mm;
         }
         /* 内容テーブル 数量 */
         table.content-list th.quantity, table.content-list td.quantity {
@@ -223,12 +239,34 @@
             text-align: right;
             width: 30mm;
         }
-        /* 小計 */
+        /* 小計 - 小計 */
+        table.content-list td.footer-subtotal-title {
+            text-align: left;
+        }
+        table.content-list td.footer-subtotal {
+            text-align: right;
+        }
+        /* 小計 - 消費税 */
+        table.content-list td.footer-tax-title {
+            text-align: left;
+        }
+        table.content-list td.footer-tax {
+            text-align: right;
+        }
+        /* 小計 - 合計 */
         table.content-list td.footer-total-title {
+            font-size: 1.2rem;
             text-align: left;
         }
         table.content-list td.footer-total {
+            font-size: 1.2rem;
             text-align: right;
+        }
+        /* 備考 */
+        div.report-footer-memo {
+            width: 160mm;
+            height: 60mm;
+            padding: 3mm;
         }
     </style>
 
@@ -239,12 +277,13 @@
         <div class="report-header-container">
             <div class="report-header-customer">
                 <div class="report-header-customer-name">
-                    お客様名
+                    {!accountName}&nbsp;御中
                 </div>
                 <div class="report-header-customer-address">
-                    お客様住所<br />
-                    お客様住所<br />
-                    担当者名
+                    〒{!accountPostalCode}<br />
+                    {!accountAddress1}<br />
+                    {!accountAddress2}<br />
+                    {!contactName}&nbsp;様
                 </div>
                 <div class="report-header-description">
                     下記の通り御見積もり申し上げます。
@@ -254,7 +293,9 @@
                         合計金額
                     </div>
                     <div class="report-header-total">
-                        220,000円
+                        <apex:outputText value="{0, number, ###,###} 円">
+                            <apex:param value="{!total}" />
+                        </apex:outputText>
                     </div>
                 </div>
             </div>
@@ -264,8 +305,38 @@
                         見積番号
                     </div>
                     <div class="report-header-quotation-no">
-                        E20191202-001
+                        {!quoteNumber}
                     </div>
+                </div>
+                <div class="report-header-quotation-date-container">
+                    <div class="report-header-quotation-date-title">
+                        見積日
+                    </div>
+                    <div class="report-header-quotation-date">
+                        <apex:outputText value="{0, date, yyyy年MM月dd日}">
+                            <apex:param value="{!quoteDate}" />
+                        </apex:outputText>
+                    </div>
+                </div>
+                <div class="report-header-expiration-date-container">
+                    <div class="report-header-expiration-date-title">
+                        有効期限
+                    </div>
+                    <div class="report-header-expiration-date">
+                        {!expirationDate}
+                    </div>
+                </div>
+                <div class="report-header-company-name">
+                    <apex:image value="{!$Resource.pdLogo}" width="246px" styleClass="report-header-company-logo" />
+                    <apex:image value="{!$Resource.pdStamp}" width="76px" styleClass="report-header-company-stamp" />
+                </div>
+                <div class="report-header-company-addresss">
+                    〒{!companyPostalCode}<br />
+                    {!companyAddress1}<br />
+                    {!companyAddress2}<br />
+                    電話：{!companyPhone}<br />
+                    担当：{!employeeName}<br />
+                    メール：{!mailAddress}
                 </div>
             </div>
         </div>
@@ -280,73 +351,62 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="item-detail">デジタルサービス導入支援</td>
-                        <td class="quantity">1式</td>
-                        <td class="price">200,000</td>
-                        <td class="total">200,000</td>
-                    </tr>
-                    <tr>
-                        <td class="item-detail">デジタルサービス導入支援</td>
-                        <td class="quantity">1式</td>
-                        <td class="price">200,000</td>
-                        <td class="total">200,000</td>
-                    </tr>
-                    <tr>
-                        <td class="item-detail">デジタルサービス導入支援</td>
-                        <td class="quantity">1式</td>
-                        <td class="price">200,000</td>
-                        <td class="total">200,000</td>
-                    </tr>
-                    <tr>
-                        <td class="item-detail">デジタルサービス導入支援</td>
-                        <td class="quantity">1式</td>
-                        <td class="price">200,000</td>
-                        <td class="total">200,000</td>
-                    </tr>
-                    <tr>
-                        <td class="item-detail">デジタルサービス導入支援</td>
-                        <td class="quantity">1式</td>
-                        <td class="price">200,000</td>
-                        <td class="total">200,000</td>
-                    </tr>
-                    <tr>
-                        <td class="item-detail">デジタルサービス導入支援</td>
-                        <td class="quantity">1式</td>
-                        <td class="price">200,000</td>
-                        <td class="total">200,000</td>
-                    </tr>
-                    <tr>
-                        <td class="item-detail">デジタルサービス導入支援</td>
-                        <td class="quantity">1式</td>
-                        <td class="price">200,000</td>
-                        <td class="total">200,000</td>
-                    </tr>
-                    <tr>
-                        <td class="item-detail">デジタルサービス導入支援</td>
-                        <td class="quantity">1式</td>
-                        <td class="price">200,000</td>
-                        <td class="total">200,000</td>
-                    </tr>
+                    <apex:repeat var="item" value="{!quoteDetail}">
+                        <tr>
+                            <td class="item-detail">{!item.Description}</td>
+                            <td class="quantity">
+                                <apex:outputText value="{0, number, 0}">
+                                    <apex:param value="{!item.Quantity}"/>
+                                </apex:outputText>
+                                {!item.Unit__c}
+                            </td>
+                            <td class="price">
+                                <apex:outputText value="{0, number, ###,###}">
+                                    <apex:param value="{!item.UnitPrice}"/>
+                                </apex:outputText>
+                            </td>
+                            <td class="total">
+                                <apex:outputText value="{0, number, ###,###}">
+                                    <apex:param value="{!item.Subtotal}"/>
+                                </apex:outputText>
+                            </td>
+                        </tr>
+                    </apex:repeat>
                 </tbody>
                 <tfoot>
                     <tr>
                         <td></td>
-                        <td colspan="2" class="footer-total-title">小計</td>
-                        <td class="footer-total">200,000円</td>
+                        <td colspan="2" class="footer-subtotal-title">小計</td>
+                        <td class="footer-subtotal">
+                            <apex:outputText value="{0, number, ###,###} 円">
+                                <apex:param value="{!subTotal}"/>
+                            </apex:outputText>
+                        </td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td colspan="2" class="footer-total-title">消費税</td>
-                        <td class="footer-total">20,000円</td>
+                        <td colspan="2" class="footer-tax-title">消費税</td>
+                        <td class="footer-tax">
+                            <apex:outputText value="{0, number, ###,###} 円">
+                                <apex:param value="{!tax}"/>
+                            </apex:outputText>        
+                        </td>
                     </tr>
                     <tr>
                         <td></td>
                         <td colspan="2" class="footer-total-title">合計金額</td>
-                        <td class="footer-total">220,000円</td>
+                        <td class="footer-total">
+                            <apex:outputText value="{0, number, ###,###} 円">
+                                <apex:param value="{!total}"/>
+                            </apex:outputText>        
+                        </td>
                     </tr>
                 </tfoot>
             </table>
+        </div>
+        <div class="report-footer-memo">
+            <p>備考</p><br/>
+            <apex:outputText value="{!memo}" escape="false" />
         </div>
     </section>
 
