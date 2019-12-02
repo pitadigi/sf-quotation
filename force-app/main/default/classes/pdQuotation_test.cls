@@ -18,7 +18,7 @@ class pdQuotation_test {
         user.Email = 'kmatae@pitadigi.jp';
         user.Alias = 'kmatae';
         user.IsActive = true;
-        user.Username = 'kmatae@pitadigi.jp';
+        user.Username = 'kmatae@pitadigi.jp.test';
         user.EmailEncodingKey = 'ISO-2022-JP';
         user.TimeZoneSidKey = 'Asia/Tokyo';
         user.LocaleSidKey = 'ja_JP';
