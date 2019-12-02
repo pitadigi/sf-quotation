@@ -161,7 +161,9 @@ public with sharing class pdQuotation {
         // 合計
         total = quote.GrandTotal;
         // 備考
-        memo = quote.Description.replace('\r\n', '<br />');
+        if (quote.Description != null) {
+            memo = quote.Description.replace('\r\n', '<br />');
+        }
 
         // 見積明細情報を取得する
         quoteDetail = [SELECT Id,Description,UnitPrice,Quantity,Unit__c,Subtotal
@@ -170,6 +172,9 @@ public with sharing class pdQuotation {
             ORDER BY LineNumber];
 
         // 見積明細が8行未満なら8行になるまで空明細を追加する
+        if (quoteDetail == null) {
+            quoteDetail = new List<QuoteLineItem>();
+        }
         for (Integer i=quoteDetail.size() ; i<8 ; i++) {
             QuoteLineItem item = new QuoteLineItem();
             quoteDetail.add(item);
