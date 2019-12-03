@@ -83,12 +83,12 @@ class pdQuotation_test {
         quote.Tax = 20000;
         quote.OpportunityId = opp.Id;
         quote.ContactId = contact.Id;
+        quote.Pricebook2Id = pricebook2Id;
         quote.Name = '見積';
         insert quote;
         quote.Status = 'Accepted';
         update quote;
 
-        /*
         // 見積明細を作成する
         QuoteLineItem item = new QuoteLineItem();
         item.Description = '導入支援サービス';
@@ -99,7 +99,6 @@ class pdQuotation_test {
         item.PricebookEntryId = pbe.Id;
         item.Product2Id = p.Id;
         insert item;
-        */  
     }
 
     @isTest
