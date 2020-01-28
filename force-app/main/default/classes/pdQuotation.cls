@@ -128,7 +128,7 @@ public with sharing class pdQuotation {
         Quote quote = [SELECT Id,
             Account.FullName__c,Account.BillingPostalCode,Account.BillingState,Account.BillingCity,Account.BillingStreet,
             Contact.FirstName, Contact.LastName,
-            QuoteNumber__c, QuoteDate__c, ExpirationDate__c, Subtotal, Tax, GrandTotal, Description
+            QuoteNumber__c, QuoteDate__c, ExpirationDate__c, Subtotal, Tax, GrandTotal, Description, Memo__c
             FROM Quote
             WHERE Id=:quoteId];
         // 取引先名
@@ -161,8 +161,8 @@ public with sharing class pdQuotation {
         // 合計
         total = quote.GrandTotal;
         // 備考
-        if (quote.Description != null) {
-            memo = quote.Description.replace('\r\n', '<br />');
+        if (quote.Memo__c != null) {
+            memo = quote.Memo__c.replace('\r\n', '<br />');
         }
 
         // 見積明細情報を取得する
