@@ -169,7 +169,7 @@ public with sharing class pdQuotation {
         quoteDetail = [SELECT Id,Description,UnitPrice,Quantity,Unit__c,Subtotal
             FROM QuoteLineItem
             WHERE QuoteId=:quoteId
-            ORDER BY LineNumber];
+            ORDER BY SortOrder];
 
         // 見積明細が8行未満なら8行になるまで空明細を追加する
         if (quoteDetail == null) {

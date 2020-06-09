@@ -405,7 +405,7 @@
             </table>
         </div>
         <div class="report-footer-memo">
-            <p>備考</p><br/>
+            <p>備考</p>
             <apex:outputText value="{!memo}" escape="false" />
         </div>
     </section>
