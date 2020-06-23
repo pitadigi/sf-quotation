@@ -10,6 +10,11 @@ public with sharing class pdQuotation {
     private Id quoteId;
 
     /**
+     * 見積タイトル
+     */
+    public String title { get; set; }
+
+    /**
     * 取引先名
     */
     public String accountName { get; set; }
@@ -125,7 +130,7 @@ public with sharing class pdQuotation {
         mailAddress = user.Email;
 
         // 見積情報を取得する
-        Quote quote = [SELECT Id,
+        Quote quote = [SELECT Id,Name,
             Account.FullName__c,Account.BillingPostalCode,Account.BillingState,Account.BillingCity,Account.BillingStreet,
             Contact.FirstName, Contact.LastName,
             QuoteNumber__c, QuoteDate__c, ExpirationDate__c, Subtotal, Tax, GrandTotal, Description, Memo__c
@@ -146,6 +151,8 @@ public with sharing class pdQuotation {
                 accountAddress2 = accountStreet[1];
             }
         }
+        // 見積タイトル
+        title = quote.QuoteNumber__c + quote.Name;
         // 取引先担当者名
         contactName = quote.Contact.LastName + ' ' + quote.Contact.FirstName;
         // 見積番号
