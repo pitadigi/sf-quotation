@@ -120,13 +120,13 @@
             flex: 0 0 40mm;
             font-size: 1.5rem;
             font-weight: bold;
-            text-align: center;
+            text-align: left;
         }
         div.report-header-total {
             flex: 0 0 50mm;
             font-size: 1.5rem;
             font-weight: bold;
-            text-align: center;
+            text-align: right;
         }
         /* レポートヘッダー - 見積日 */
         div.report-header-quotation-date-container {
@@ -268,6 +268,14 @@
             height: 60mm;
             padding: 3mm;
         }
+        /* 表示ブロック */
+        visibility-block {
+            visibility: true;
+        }
+        /* 非表示ブロック */
+        hidden-block {
+            visibility: false;
+        }
     </style>
 
     <section class="page">
@@ -288,7 +296,7 @@
                 <div class="report-header-description">
                     下記の通り御見積もり申し上げます。
                 </div>
-                <div class="report-header-total-container">
+                <apex:outputPanel layout="block" styleClass="report-header-total-container" rendered="{!isTaxIncluded}">
                     <div class="report-header-total-title">
                         合計金額
                     </div>
@@ -297,7 +305,17 @@
                             <apex:param value="{!total}" />
                         </apex:outputText>
                     </div>
-                </div>
+                </apex:outputPanel>
+                <apex:outputPanel layout="block" styleClass="report-header-total-container" rendered="{!isTaxNotIncluded}">
+                    <div class="report-header-total-title">
+                        合計金額(税抜)
+                    </div>
+                    <div class="report-header-total">
+                        <apex:outputText value="{0, number, ###,###} 円">
+                            <apex:param value="{!subTotal}" />
+                        </apex:outputText>
+                    </div>
+                </apex:outputPanel>
             </div>
             <div class="report-header-company">
                 <div class="report-header-quotation-no-container">
@@ -374,33 +392,46 @@
                     </apex:repeat>
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <td></td>
-                        <td colspan="2" class="footer-subtotal-title">小計</td>
-                        <td class="footer-subtotal">
-                            <apex:outputText value="{0, number, ###,###} 円">
-                                <apex:param value="{!subTotal}"/>
-                            </apex:outputText>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td colspan="2" class="footer-tax-title">消費税</td>
-                        <td class="footer-tax">
-                            <apex:outputText value="{0, number, ###,###} 円">
-                                <apex:param value="{!tax}"/>
-                            </apex:outputText>        
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td colspan="2" class="footer-total-title">合計金額</td>
-                        <td class="footer-total">
-                            <apex:outputText value="{0, number, ###,###} 円">
-                                <apex:param value="{!total}"/>
-                            </apex:outputText>        
-                        </td>
-                    </tr>
+                    <apex:outputPanel layout="block" rendered="{!isTaxIncluded}">
+                        <tr>
+                            <td></td>
+                            <td colspan="2" class="footer-subtotal-title">小計</td>
+                            <td class="footer-subtotal">
+                                <apex:outputText value="{0, number, ###,###} 円">
+                                    <apex:param value="{!subTotal}"/>
+                                </apex:outputText>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="2" class="footer-tax-title">消費税</td>
+                            <td class="footer-tax">
+                                <apex:outputText value="{0, number, ###,###} 円">
+                                    <apex:param value="{!tax}"/>
+                                </apex:outputText>        
+                            </td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td colspan="2" class="footer-total-title">合計金額</td>
+                            <td class="footer-total">
+                                <apex:outputText value="{0, number, ###,###} 円">
+                                    <apex:param value="{!total}"/>
+                                </apex:outputText>        
+                            </td>
+                        </tr>
+                    </apex:outputPanel>
+                    <apex:outputPanel layout="block" rendered="{!isTaxNotIncluded}">
+                        <tr>
+                            <td></td>
+                            <td colspan="2" class="footer-total-title">合計金額(税抜)</td>
+                            <td class="footer-total">
+                                <apex:outputText value="{0, number, ###,###} 円">
+                                    <apex:param value="{!subTotal}"/>
+                                </apex:outputText>        
+                            </td>
+                        </tr>
+                    </apex:outputPanel>
                 </tfoot>
             </table>
         </div>

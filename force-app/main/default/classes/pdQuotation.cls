@@ -99,6 +99,15 @@ public with sharing class pdQuotation {
     public String memo { get; set; }
 
     /**
+     * 税込表示
+     */
+    public Boolean isTaxIncluded { get; set; }
+    /**
+     * 税抜表示
+     */
+    public Boolean isTaxNotIncluded { get; set; }
+
+    /**
     * 見積を印刷するために必要なデータを取得する
     */
     public void doPrint() {
@@ -132,7 +141,7 @@ public with sharing class pdQuotation {
         // 見積情報を取得する
         Quote quote = [SELECT Id,Name,
             Account.FullName__c,Account.BillingPostalCode,Account.BillingState,Account.BillingCity,Account.BillingStreet,
-            Contact.FirstName, Contact.LastName,
+            Contact.FirstName, Contact.LastName,TaxType__c,
             QuoteNumber__c, QuoteDate__c, ExpirationDate__c, Subtotal, Tax, GrandTotal, Description, Memo__c
             FROM Quote
             WHERE Id=:quoteId];
@@ -171,6 +180,9 @@ public with sharing class pdQuotation {
         if (quote.Memo__c != null) {
             memo = quote.Memo__c.replace('\r\n', '<br />');
         }
+        // 消費税表示
+        isTaxIncluded = (quote.taxType__c == '税込');
+        isTaxNotIncluded = (quote.taxType__c == '税抜');
 
         // 見積明細情報を取得する
         quoteDetail = [SELECT Id,Description,UnitPrice,Quantity,Unit__c,Subtotal
