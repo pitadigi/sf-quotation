@@ -198,7 +198,7 @@
         /* レポート内容 */
         div.report-content {
             margin-top: 2mm;
-            margin-bottom: 2mm;
+            margin-bottom: 5mm;
             height: 117mm;
         }
 
