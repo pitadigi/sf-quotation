@@ -373,7 +373,7 @@
                         <tr>
                             <td class="item-detail">{!item.Description}</td>
                             <td class="quantity">
-                                <apex:outputText value="{0, number, 0}">
+                                <apex:outputText value="{0, number, #.##}">
                                     <apex:param value="{!item.Quantity}"/>
                                 </apex:outputText>
                                 {!item.Unit__c}
