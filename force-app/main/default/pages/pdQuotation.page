@@ -291,7 +291,7 @@
                     〒{!accountPostalCode}<br />
                     {!accountAddress1}<br />
                     {!accountAddress2}<br />
-                    {!contactName}&nbsp;様
+                    {!IF(ISBLANK(contactName), "", contactName + " 様")}
                 </div>
                 <div class="report-header-description">
                     下記の通り御見積もり申し上げます。

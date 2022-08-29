@@ -163,7 +163,13 @@ public with sharing class pdQuotation {
         // 見積タイトル
         title = quote.QuoteNumber__c + quote.Name;
         // 取引先担当者名
-        contactName = quote.Contact.LastName + ' ' + quote.Contact.FirstName;
+        contactName = null;
+        if (quote.Contact.LastName != null) {
+            contactName = quote.Contact.LastName;
+            if (quote.Contact.FirstName != null) {
+                contactName += ' ' + quote.Contact.FirstName;
+            }
+        }
         // 見積番号
         quoteNumber = quote.QuoteNumber__c;
         // 見積日
